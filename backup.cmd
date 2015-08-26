@@ -1,0 +1,1 @@
+robocopy D:\ E:\ *.* /MIR /XD "System Volume Information","$RECYCLE.BIN" /LOG+:"D:\robo_backup.log" /R:3 /W:10
