@@ -1,0 +1,25 @@
+Hey all,
+               So this here solves one part of a problem we have had with some EWS tickets we have had and it involves testing EWS. There is still some work to do to it but I wanted to get at least the basics out. So this guy will allow you to connect to a mailbox over EWS and pull the first 10 subjects in the persons inbox and then their item count in their inbox. Some of the big highlights for this version are that connectivity, the ability to specify credentials, an AutoD function, and a manual URL function.
+usage is pretty simple make sure you have the script and the EWS DLLS in the same directory then .\Test-EWS.ps1 and done
+To specify the mailbox to test against on the command line it is –Mailbox, so .\Test-EWS.ps1 -Mailbox 'v-jasonb@microsoft.com'
+To specify creds you need to use a System.Net.NetworkCredentials compatible object (like PSCredential), so an example is .\Test-EWS.ps1 -Mailbox 'v-jasonb@microsoft.com' –Credential (get-credential).
+As a secret bonus feature the evidence output can be piped into clip and sent to the clipboard so .\Test-EWS.ps1 -Mailbox 'v-jasonb@microsoft.com' -DefaultCreds|clip will give you the following in your clipboard:
+
+Subject                                                                       
+-------                                                                       
+UPDATE: MI0002050 - Office 365 Exchange Online (Dedicated)                    
+Automatic reply: TCCC | SDE:3867256 | Unable to create replication batch, M...
+Awareness: Scheduled Maintenance to Improve your Lync Service November 15 -...
+RE: Issue with Quickbuild  -- Project was not placed in a valid stage         
+RE: Undo build break                                                          
+Issue with Quickbuild  -- Project was not placed in a valid stage             
+RE: Q cached build errors recently in Chicago                                 
+UPDATE: MI0002050 - Office 365 Exchange Online (Dedicated)                    
+RE: Stale private test profiles                                               
+RE: Q cached build errors recently in Chicago                                 
+
+
+v-jasonb@microsoft.com's Inbox contains 3089 items
+
+
+There are features planned but any suggestions are welcome.
