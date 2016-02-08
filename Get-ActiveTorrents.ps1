@@ -64,5 +64,3 @@ foreach($torrent in $torrents) {
 }
 
 $torrents | Select-Object name,percentDone,completionDate | Sort percentDone -Descending | ConvertTo-Html -Fragment | Out-File .\active-torrents.html
-
-
