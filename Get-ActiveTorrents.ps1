@@ -1,6 +1,7 @@
 function Get-ActiveTorrents () {
 	param (
 		[string]$Server,
+        $Credential,
 		[string[]]$Fields = @("activityDate", "addedDate", "bandwidthPriority", "comment", "corruptEver", "creator", "dateCreated", "desiredAvailable", "doneDate", "downloadDir", "downloadedEver", "downloadLimit", "downloadLimited", "error", "errorString", "eta", "etaIdle", "files", "fileStats", "hashString", "haveUnchecked", "haveValid", "honorsSessionLimits", "id", "isFinished", "isPrivate", "isStalled", "leftUntilDone", "magnetLink", "manualAnnounceTime", "maxConnectedPeers", "metadataPercentComplete", "name", "peer-limit", "peers", "peersConnected", "peersFrom", "peersGettingFromUs", "peersSendingToUs", "percentDone", "pieces", "pieceCount", "pieceSize", "priorities", "queuePosition", "rateDownload (B/s)", "rateUpload (B/s)", "recheckProgress", "secondsDownloading", "secondsSeeding", "seedIdleLimit", "seedIdleMode", "seedRatioLimit", "seedRatioMode", "sizeWhenDone", "startDate", "status", "trackers", "trackerStats", "totalSize", "torrentFile", "uploadedEver", "uploadLimit", "uploadLimited", "uploadRatio", "wanted", "webseeds", "webseedsSendingToUs", "files", "fileStats", "peers", "peersFrom", "pieces", "priorities", "trackers", "trackerStats", "wanted", "webseeds")
 	)
 
@@ -32,7 +33,7 @@ function Get-ActiveTorrents () {
 	try	{
 		# We expect this to fail with a 409 status code, but we still need to run it to grab the X-Transmission-Session-Id
 		# out of the exception
-		$response = Invoke-WebRequest $url;
+		$response = Invoke-WebRequest $url -Credential $Credential;
 	} catch {
 		if ($Error[0].ErrorDetails.Message.Split(":")[0] -eq "409") {
 			#409 returned as expected, set the session_id
@@ -47,12 +48,13 @@ function Get-ActiveTorrents () {
 	$headers = @{};
 	$headers.Add("X-Transmission-Session-Id", $session_id);
 
-	$response = Invoke-WebRequest $url -Method POST -Body $command -Headers $headers;
+	$response = Invoke-WebRequest $url -Method POST -Body $command -Headers $headers -Credential $Credential;
 	return (ConvertFrom-Json $response.Content).arguments.torrents;
 }
 
 $current = Get-Date;
-$torrents = Get-ActiveTorrents -Server 192.168.1.7:9091 -Fields @("name", "percentDone", "eta", "peersFrom");
+$cred = Get-Credential;
+$torrents = Get-ActiveTorrents -Server 192.168.1.10:9091 -Fields @("name", "percentDone", "eta", "peersFrom") -Credential $cred;
 foreach($torrent in $torrents) {
 	Add-Member -InputObject $torrent -MemberType NoteProperty -Name completionDate -Value "";
 	switch ($torrent.eta) {
